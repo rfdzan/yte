@@ -3,7 +3,7 @@ from pathlib import PurePath
 
 from PyQt6.QtCore import QUrl
 from PyQt6.QtGui import QAction, QIcon
-from PyQt6.QtWidgets import QApplication, QLabel, QDialog, QStatusBar, QToolBar, QHBoxLayout, QVBoxLayout, QWidget, QPushButton
+from PyQt6.QtWidgets import QApplication, QLabel, QDialog, QStatusBar, QToolBar, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QSplitter
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 
 
@@ -12,14 +12,11 @@ class SearchWindow:
         self._browser = QWebEngineView()
         self._browser.setUrl(QUrl("https://www.youtube.com/"))
 
-    def createWidget(self) -> QWebEngineView:
-        return self._browser
-
-    def _createMenuBar(self, browser: QWebEngineView):
+    def _createMenuBar(self) -> QToolBar:
         navbar = QToolBar("Navigation")
         # back button
         back_button = QAction(
-            QIcon(str(PurePath(r"icons").joinpath("arrow-180.png"))), "Back", parent=browser)
+            QIcon(str(PurePath(r"icons").joinpath("arrow-180.png"))), "Back", parent=self._browser)
         back_button.triggered.connect(self._browser.back)
         navbar.addAction(back_button)
         # forward button
@@ -28,6 +25,13 @@ class SearchWindow:
         back_button.triggered.connect(self._browser.forward)
         navbar.addAction(back_button)
         return navbar
+
+    def _createLayout(self):
+        search_window_layout = QVBoxLayout()
+        search_window_navbar = self._createMenuBar()
+        search_window_layout.addWidget(search_window_navbar)
+        search_window_layout.addWidget(self._browser)
+        return search_window_layout
 
 
 class ViewerWindow:
@@ -38,20 +42,16 @@ class ViewerWindow:
 class MainWindow(QDialog):
     def __init__(self):
         super().__init__(parent=None)
-        self.setWindowTitle("QMainWindow")
+        self.setWindowTitle("yte")
         self._createApp()
 
     def _createApp(self):
         self.setLayout(self._createLayout())
 
     def _createLayout(self) -> QHBoxLayout:
-        parent_layout = QVBoxLayout()
-        search_window = SearchWindow()
-        create_search_browser = search_window.createWidget()
-        search_window_navbar = search_window._createMenuBar(
-            create_search_browser)
-        parent_layout.addWidget(search_window_navbar)
-        parent_layout.addWidget(create_search_browser)
+        parent_layout = QHBoxLayout()
+        search_window_layout = SearchWindow()._createLayout()
+        parent_layout.addLayout(search_window_layout)
         return parent_layout
 
 
