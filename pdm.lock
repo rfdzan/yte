@@ -5,7 +5,7 @@
 groups = ["default", "static_check", "test", "format"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:38223c245bf187becc9873b24df250bac7e1a9a1d888ec5485e15d400acee1bd"
+content_hash = "sha256:c795b6f3a03e327c8e9c3289ffcd85f0312c15f5fba817daf2629a894f2869b7"
 
 [[package]]
 name = "black"
@@ -185,6 +185,51 @@ files = [
     {file = "PyQt6_sip-13.6.0-cp311-cp311-win32.whl", hash = "sha256:58f68a48400e0b3d1ccb18090090299bad26e3aed7ccb7057c65887b79b8aeea"},
     {file = "PyQt6_sip-13.6.0-cp311-cp311-win_amd64.whl", hash = "sha256:0dfd22cfedd87e96f9d51e0778ca2ba3dc0be83e424e9e0f98f6994d8d9c90f0"},
     {file = "PyQt6_sip-13.6.0.tar.gz", hash = "sha256:2486e1588071943d4f6657ba09096dc9fffd2322ad2c30041e78ea3f037b5778"},
+]
+
+[[package]]
+name = "pyqt6-webengine"
+version = "6.7.0"
+requires_python = ">=3.8"
+summary = "Python bindings for the Qt WebEngine framework"
+groups = ["default"]
+dependencies = [
+    "PyQt6-WebEngine-Qt6<6.8.0,>=6.7.0",
+    "PyQt6-sip<14,>=13.6",
+    "PyQt6>=6.2.0",
+]
+files = [
+    {file = "PyQt6_WebEngine-6.7.0-cp38-abi3-macosx_10_14_universal2.whl", hash = "sha256:1a3df9d6ac2dfa1bb3b826f3926c13db5b6d427e96e8d574c5aa5445a8b13db8"},
+    {file = "PyQt6_WebEngine-6.7.0-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:098b5f8d5903a3091010098694f84dd786cca878ee28a5a3ce651507d5d65468"},
+    {file = "PyQt6_WebEngine-6.7.0-cp38-abi3-win_amd64.whl", hash = "sha256:e79191e626303b11ae9a3ee98e70160f50bc90a9c4df92df17bade8290e139e8"},
+    {file = "PyQt6_WebEngine-6.7.0.tar.gz", hash = "sha256:68edc7adb6d9e275f5de956881e79cca0d71fad439abeaa10d823bff5ac55001"},
+]
+
+[[package]]
+name = "pyqt6-webengine-qt6"
+version = "6.7.1"
+summary = "The subset of a Qt installation needed by PyQt6-WebEngine."
+groups = ["default"]
+dependencies = [
+    "PyQt6-WebEngineSubwheel-Qt6==6.7.1",
+]
+files = [
+    {file = "PyQt6_WebEngine_Qt6-6.7.1-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:69b5533d1d98135d35cc4307fad513186eb53d0a95655990c223d7bcf73a3b82"},
+    {file = "PyQt6_WebEngine_Qt6-6.7.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:e568fed3e9e9c9f9c8227c3862e1de08b7d95213957ea80ef391723b132fa23d"},
+    {file = "PyQt6_WebEngine_Qt6-6.7.1-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:fcfb25fe44121c7561bb73aa9591d8b1ebc5c799d68dc7828ba5578874523ad0"},
+    {file = "PyQt6_WebEngine_Qt6-6.7.1-py3-none-win_amd64.whl", hash = "sha256:d01ebab155994845cc403a9171fe9ca2a638af813741b9c452176a9775c43204"},
+]
+
+[[package]]
+name = "pyqt6-webenginesubwheel-qt6"
+version = "6.7.1"
+summary = "The subset of a Qt installation needed by PyQt6-WebEngine."
+groups = ["default"]
+files = [
+    {file = "PyQt6_WebEngineSubwheel_Qt6-6.7.1-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:2773bf55535763557b6ff1c36197f525e90829a082a3b32cc8ad601b67f19d64"},
+    {file = "PyQt6_WebEngineSubwheel_Qt6-6.7.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:682890ad6a3103f957017a3a3a0e0218d5c126a8fe13021205d3dd7e38664443"},
+    {file = "PyQt6_WebEngineSubwheel_Qt6-6.7.1-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:381e450067653d218b1b7fec183ec121249c6792d1108f6bf54163736823711f"},
+    {file = "PyQt6_WebEngineSubwheel_Qt6-6.7.1-py3-none-win_amd64.whl", hash = "sha256:88c340bcceeba004e86b0bba6a89f14d2cf8f171d8d208b0e0be8219f3e36ee4"},
 ]
 
 [[package]]
