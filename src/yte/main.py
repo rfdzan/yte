@@ -17,6 +17,8 @@ class SearchWindow:
         # back button
         back_button = QAction(
             QIcon(str(PurePath(r"icons").joinpath("arrow-180.png"))), "Back", parent=self._browser)
+        # connects a signal (back_button.triggered) to a function slot (self._browser.back)
+        # 'back' is a function but we put the callback to it for now, which will only be run if the button 'back_button' is pressed
         back_button.triggered.connect(self._browser.back)
         navbar.addAction(back_button)
         # forward button

@@ -1,7 +1,7 @@
 [project]
-name = "pyqt_tutorial"
+name = "yte"
 version = "0.1.0"
-description = "Default template for PDM package"
+description = "A browser specifically made for YouTube"
 authors = [
     {name = "rfdzan", email = "hekodev.py@gmail.com"},
 ]
@@ -18,7 +18,7 @@ license = {text = "MIT"}
 distribution = false
 
 [tool.pdm.scripts]
-main = "python src/pyqt_tutorial/main.py"
+main = "python src/yte/main.py"
 mypy = "mypy ."
 
 [tool.pdm.dev-dependencies]
