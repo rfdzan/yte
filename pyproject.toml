@@ -1,0 +1,32 @@
+[project]
+name = "pyqt_tutorial"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "rfdzan", email = "hekodev.py@gmail.com"},
+]
+dependencies = [
+    "pyqt6>=6.7.0",
+]
+requires-python = "==3.11.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+main = "python src/pyqt_tutorial/main.py"
+mypy = "mypy ."
+
+[tool.pdm.dev-dependencies]
+static_check = [
+    "mypy>=1.10.0",
+]
+test = [
+    "pytest>=8.2.2",
+]
+format = [
+    "black>=24.4.2",
+]
