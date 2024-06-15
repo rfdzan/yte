@@ -1,7 +1,7 @@
 import sys
 from pathlib import PurePath
 
-from PySide6.QtCore import QUrl
+from PySide6.QtCore import QUrl, QStandardPaths
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
     QApplication,
@@ -28,6 +28,11 @@ class CustomWebPage(QWebEnginePage):
     ) -> bool:
         # seems like requestedUrl() is what I need.
         print(self.requestedUrl().toString())
+        # print(
+        #     QStandardPaths().writableLocation(
+        #         QStandardPaths().StandardLocation.GenericDataLocation
+        #     )
+        # )
         # if it returns True, loads the requested url
         # else, it won't load
 
@@ -79,22 +84,39 @@ class SearchWindow:
 
 class ViewerWindow:
     def __init__(self):
-        self.window = QWidget()
+        self._browser = QWebEngineView()
+        self._browser.load("https://www.google.com/")
+
+    def _createLayout(self) -> QHBoxLayout:
+        layout = QHBoxLayout()
+        layout.addWidget(self._browser)
+        return layout
+
+    def loadPage(self, url: str):
+        self._browser.load(QUrl(url))
 
 
 class MainWindow(QDialog):
     def __init__(self):
         super().__init__(parent=None)
         self.setWindowTitle("yte")
+        self._left = QWidget()
+        self._right = QWidget()
         self._createApp()
 
     def _createApp(self):
         self.setLayout(self._createLayout())
 
     def _createLayout(self) -> QHBoxLayout:
+        splitter = QSplitter()
         parent_layout = QHBoxLayout()
         search_window_layout = SearchWindow()._createLayout()
-        parent_layout.addLayout(search_window_layout)
+        viewer_window_layout = ViewerWindow()._createLayout()
+        self._left.setLayout(search_window_layout)
+        self._right.setLayout(viewer_window_layout)
+        splitter.addWidget(self._left)
+        splitter.addWidget(self._right)
+        parent_layout.addWidget(splitter)
         return parent_layout
 
 
