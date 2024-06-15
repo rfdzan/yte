@@ -23,16 +23,23 @@ class CustomWebPage(QWebEnginePage):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
 
+    def acceptNavigationRequest(
+        self, url: QUrl, type: QWebEnginePage.NavigationType, isMainFrame: bool
+    ) -> bool:
+        # seems like requestedUrl() is what I need.
+        print(self.requestedUrl().toString())
+        # if it returns True, loads the requested url
+        # else, it won't load
+
+        # PLAN:
+        # read requestedUrl(), if it matches regex, do not load the page on SearchWindow, instead open it to side with the url changed to embed. <- i already have this regex
+        return True
+
 
 class CustomWebView(QWebEngineView):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setPage(CustomWebPage(self))
-
-    def acceptNavigationRequest(
-        url: QUrl, type: QWebEnginePage.NavigationType, isMainFrame: bool
-    ) -> bool:
-        return True
 
 
 class SearchWindow:
