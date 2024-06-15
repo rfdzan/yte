@@ -1,15 +1,14 @@
 [project]
 name = "yte"
 version = "0.1.0"
-description = "A browser specifically made for YouTube"
+description = "Default template for PDM package"
 authors = [
     {name = "rfdzan", email = "hekodev.py@gmail.com"},
 ]
 dependencies = [
-    "pyqt6>=6.7.0",
-    "PyQt6-WebEngine>=6.7.0",
+    "pyside6>=6.7.1",
 ]
-requires-python = "==3.11.*"
+requires-python = "==3.10.*"
 readme = "README.md"
 license = {text = "MIT"}
 
@@ -22,12 +21,12 @@ main = "python src/yte/main.py"
 mypy = "mypy ."
 
 [tool.pdm.dev-dependencies]
-static_check = [
-    "mypy>=1.10.0",
+format = [
+    "black>=24.4.2",
 ]
 test = [
     "pytest>=8.2.2",
 ]
-format = [
-    "black>=24.4.2",
+mypy = [
+    "mypy>=1.10.0",
 ]

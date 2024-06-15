@@ -1,29 +1,63 @@
 import sys
 from pathlib import PurePath
 
-from PyQt6.QtCore import QUrl
-from PyQt6.QtGui import QAction, QIcon
-from PyQt6.QtWidgets import QApplication, QLabel, QDialog, QStatusBar, QToolBar, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QSplitter
-from PyQt6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtCore import QUrl
+from PySide6.QtGui import QAction, QIcon
+from PySide6.QtWidgets import (
+    QApplication,
+    QLabel,
+    QDialog,
+    QStatusBar,
+    QToolBar,
+    QHBoxLayout,
+    QVBoxLayout,
+    QWidget,
+    QPushButton,
+    QSplitter,
+)
+from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWebEngineCore import QWebEnginePage
+
+
+class CustomWebPage(QWebEnginePage):
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
+
+
+class CustomWebView(QWebEngineView):
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
+        self.setPage(CustomWebPage(self))
+
+    def acceptNavigationRequest(
+        url: QUrl, type: QWebEnginePage.NavigationType, isMainFrame: bool
+    ) -> bool:
+        return True
 
 
 class SearchWindow:
     def __init__(self):
-        self._browser = QWebEngineView()
+        self._browser = CustomWebView()
         self._browser.setUrl(QUrl("https://www.youtube.com/"))
 
     def _createMenuBar(self) -> QToolBar:
         navbar = QToolBar("Navigation")
         # back button
         back_button = QAction(
-            QIcon(str(PurePath(r"icons").joinpath("arrow-180.png"))), "Back", parent=self._browser)
+            QIcon(str(PurePath(r"icons").joinpath("arrow-180.png"))),
+            "Back",
+            parent=self._browser,
+        )
         # connects a signal (back_button.triggered) to a function slot (self._browser.back)
         # 'back' is a function but we put the callback to it for now, which will only be run if the button 'back_button' is pressed
         back_button.triggered.connect(self._browser.back)
         navbar.addAction(back_button)
         # forward button
         back_button = QAction(
-            QIcon(str(PurePath(r"icons").joinpath("arrow-000.png"))), "Forward", parent=self._browser)
+            QIcon(str(PurePath(r"icons").joinpath("arrow-000.png"))),
+            "Forward",
+            parent=self._browser,
+        )
         back_button.triggered.connect(self._browser.forward)
         navbar.addAction(back_button)
         return navbar
