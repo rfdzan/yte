@@ -1,5 +1,6 @@
 import sys
 from pathlib import PurePath
+from dataclasses import dataclass
 
 from PySide6.QtCore import QUrl, QStandardPaths
 from PySide6.QtGui import QAction, QIcon
@@ -19,15 +20,40 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEnginePage
 
 
+class ViewerWindow:
+    def __init__(self):
+        self._browser = QWebEngineView()
+        self._browser.load("https://www.google.com/")
+
+    def _getInstance(self) -> QWebEngineView:
+        return self._browser
+
+    def _createLayout(self) -> QHBoxLayout:
+        layout = QHBoxLayout()
+        layout.addWidget(self._browser)
+        return layout
+
+    def _getUrl(self):
+        return self._browser.url().toString()
+
+    def _loadUrl(self, url: str):
+        print("_loadUrl is called.")
+        self._browser.setUrl(QUrl(url))
+
+    url = property(fset=_loadUrl, fget=_getUrl)
+
+
 class CustomWebPage(QWebEnginePage):
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent=None, viewer_window=ViewerWindow) -> None:
         super().__init__(parent)
+        self._viewer = viewer_window
 
     def acceptNavigationRequest(
         self, url: QUrl, type: QWebEnginePage.NavigationType, isMainFrame: bool
     ) -> bool:
         # seems like requestedUrl() is what I need.
         print(self.requestedUrl().toString())
+        self._viewer.url = self.requestedUrl().toString()
         # print(
         #     QStandardPaths().writableLocation(
         #         QStandardPaths().StandardLocation.GenericDataLocation
@@ -42,15 +68,22 @@ class CustomWebPage(QWebEnginePage):
 
 
 class CustomWebView(QWebEngineView):
-    def __init__(self, parent=None) -> None:
+    def __init__(self, viewer_window: ViewerWindow, parent=None) -> None:
         super().__init__(parent)
-        self.setPage(CustomWebPage(self))
+        self._viewer = viewer_window
+        self._page = CustomWebPage(self, viewer_window=self._viewer)
+        self.setPage(self._page)
 
 
 class SearchWindow:
     def __init__(self):
-        self._browser = CustomWebView()
+        self._viewer = ViewerWindow()
+        self._browser = CustomWebView(self._viewer)
         self._browser.setUrl(QUrl("https://www.youtube.com/"))
+        # TODO: control ViewerWindow from SearchWindow.
+
+    def _getViewerInstance(self) -> ViewerWindow:
+        return self._viewer
 
     def _createMenuBar(self) -> QToolBar:
         navbar = QToolBar("Navigation")
@@ -65,13 +98,13 @@ class SearchWindow:
         back_button.triggered.connect(self._browser.back)
         navbar.addAction(back_button)
         # forward button
-        back_button = QAction(
+        forward_button = QAction(
             QIcon(str(PurePath(r"icons").joinpath("arrow-000.png"))),
             "Forward",
             parent=self._browser,
         )
-        back_button.triggered.connect(self._browser.forward)
-        navbar.addAction(back_button)
+        forward_button.triggered.connect(self._browser.forward)
+        navbar.addAction(forward_button)
         return navbar
 
     def _createLayout(self):
@@ -80,20 +113,6 @@ class SearchWindow:
         search_window_layout.addWidget(search_window_navbar)
         search_window_layout.addWidget(self._browser)
         return search_window_layout
-
-
-class ViewerWindow:
-    def __init__(self):
-        self._browser = QWebEngineView()
-        self._browser.load("https://www.google.com/")
-
-    def _createLayout(self) -> QHBoxLayout:
-        layout = QHBoxLayout()
-        layout.addWidget(self._browser)
-        return layout
-
-    def loadPage(self, url: str):
-        self._browser.load(QUrl(url))
 
 
 class MainWindow(QDialog):
@@ -110,9 +129,10 @@ class MainWindow(QDialog):
     def _createLayout(self) -> QHBoxLayout:
         splitter = QSplitter()
         parent_layout = QHBoxLayout()
-        search_window_layout = SearchWindow()._createLayout()
-        viewer_window_layout = ViewerWindow()._createLayout()
-        self._left.setLayout(search_window_layout)
+        search_window = SearchWindow()
+        # search_window_layout = seach._createLayout()
+        viewer_window_layout = search_window._getViewerInstance()._createLayout()
+        self._left.setLayout(search_window._createLayout())
         self._right.setLayout(viewer_window_layout)
         splitter.addWidget(self._left)
         splitter.addWidget(self._right)
