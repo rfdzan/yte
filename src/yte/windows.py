@@ -27,8 +27,9 @@ class ViewerWindow:
     def _getUrl(self):
         return self._browser.url().toString()
 
-    def _loadUrl(self, url: str):
-        self._browser.setUrl(QUrl(url))
+    def _loadUrl(self, url: QUrl):
+        print(f"_loadUrl is called on: {url.toString()}")
+        self._browser.setUrl(url)
 
     url = property(fset=_loadUrl, fget=_getUrl)
 
