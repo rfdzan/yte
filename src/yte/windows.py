@@ -3,13 +3,16 @@ from pathlib import PurePath
 
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QAction, QIcon
-from PySide6.QtWidgets import QToolBar, QHBoxLayout, QVBoxLayout, QSplitter
+from PySide6.QtWidgets import QToolBar, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 
 class ViewerWindow:
     def __init__(self):
         self._browser = QWebEngineView()
+        self._browser.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
         self._splitter = None
         self._browser.load("https://www.google.com/")
 
