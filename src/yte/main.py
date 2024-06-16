@@ -27,6 +27,8 @@ class MainWindow(QDialog):
         self.setPalette(self.color)
 
         self._splitter = QSplitter()
+        self._splitter.setHandleWidth(0)
+
         self._search_window_toggled = True
         self._left = QWidget()
         self._right = QWidget()
@@ -47,6 +49,7 @@ class MainWindow(QDialog):
         self._splitter.addWidget(self._right)
         viewer_window.splitter = self._splitter
         parent_layout.addWidget(self._splitter)
+        parent_layout.setContentsMargins(0, 0, 0, 0)
         return parent_layout
 
     def keyPressEvent(self, event: QKeyEvent) -> None:

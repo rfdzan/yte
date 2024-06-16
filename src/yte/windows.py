@@ -5,14 +5,24 @@ from PySide6.QtCore import QUrl
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QToolBar, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy
 from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWebEngineCore import QWebEngineProfile, QWebEnginePage
 
 
 class ViewerWindow:
     def __init__(self):
         self._browser = QWebEngineView()
+        self._browser_profile = QWebEngineProfile("my_profile", self._browser)
+        self._browser_profile.setHttpUserAgent(
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0"
+        )
+        self._browser_profile.setPersistentCookiesPolicy(
+            QWebEngineProfile.PersistentCookiesPolicy.AllowPersistentCookies
+        )
         self._browser.setSizePolicy(
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
         )
+        self._page = QWebEnginePage(self._browser_profile, self._browser)
+        self._browser.setPage(self._page)
         self._splitter = None
         self._browser.load("https://www.google.com/")
 
