@@ -1,5 +1,5 @@
 import sys
-
+import os
 from PySide6.QtGui import QKeyEvent
 from windows import SearchWindow
 
@@ -22,6 +22,10 @@ class MainWindow(QDialog):
             | Qt.WindowType.WindowMaximizeButtonHint
             | Qt.WindowType.WindowCloseButtonHint
         )
+        self.color = self.palette()
+        self.color.setColor(self.backgroundRole(), "#282828")
+        self.setPalette(self.color)
+
         self._splitter = QSplitter()
         self._search_window_toggled = True
         self._left = QWidget()
