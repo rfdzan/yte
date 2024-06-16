@@ -3,34 +3,71 @@ from pathlib import PurePath
 
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QAction, QIcon
-from PySide6.QtWidgets import (
-    QToolBar,
-    QHBoxLayout,
-    QVBoxLayout,
-)
+from PySide6.QtWidgets import QToolBar, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 
 class ViewerWindow:
     def __init__(self):
         self._browser = QWebEngineView()
+        self._browser.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
+        self._splitter = None
         self._browser.load("https://www.google.com/")
+
+    def _set_splitter(self, splitter: QSplitter):
+        self._splitter = splitter
 
     def _getInstance(self) -> QWebEngineView:
         return self._browser
 
+    def _check_splitter_toggle(self, hide_search_window: QAction):
+        """
+        Currently unused.
+        """
+        splitter_left_side = self._splitter.widget(0)
+
+        if hide_search_window:
+            print("hide search window: active")
+            splitter_left_side.hide()
+
+        else:
+            print("hide search window: inactive")
+            splitter_left_side.show()
+
+    def _createNavbar(self) -> QToolBar:
+        """
+        Create a toolbar with a 'collapse search window' button.
+        Currently disabled.
+        This may come back in the future if I see fit.
+        """
+        navbar = QToolBar()
+        hide_search_window = QAction(
+            QIcon(str(PurePath(r"icons").joinpath("arrow-180.png"))),
+            "Back",
+            parent=self._browser,
+        )
+        hide_search_window.setCheckable(True)
+        hide_search_window.triggered.connect(self._check_splitter_toggle)
+        navbar.addAction(hide_search_window)
+        return navbar
+
     def _createLayout(self) -> QHBoxLayout:
-        layout = QHBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(self._browser)
+        # layout.addWidget(self._createNavbar)
         return layout
 
     def _getUrl(self):
         return self._browser.url().toString()
 
-    def _loadUrl(self, url: str):
-        self._browser.setUrl(QUrl(url))
+    def _loadUrl(self, url: QUrl):
+        print(f"_loadUrl is called on: {url.toString()}")
+        self._browser.setUrl(url)
 
     url = property(fset=_loadUrl, fget=_getUrl)
+    splitter = property(fset=_set_splitter)
 
 
 class SearchWindow:
