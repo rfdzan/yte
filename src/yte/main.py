@@ -31,11 +31,13 @@ class MainWindow(QDialog):
         splitter = QSplitter()
         parent_layout = QHBoxLayout()
         search_window = SearchWindow()
-        viewer_window_layout = search_window._getViewerInstance()._createLayout()
+        viewer_window = search_window._getViewerInstance()
+        viewer_window_layout = viewer_window._createLayout()
         self._left.setLayout(search_window._createLayout())
         self._right.setLayout(viewer_window_layout)
         splitter.addWidget(self._left)
         splitter.addWidget(self._right)
+        viewer_window.splitter = splitter
         parent_layout.addWidget(splitter)
         return parent_layout
 

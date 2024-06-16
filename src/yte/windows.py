@@ -3,24 +3,45 @@ from pathlib import PurePath
 
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QAction, QIcon
-from PySide6.QtWidgets import (
-    QToolBar,
-    QHBoxLayout,
-    QVBoxLayout,
-)
+from PySide6.QtWidgets import QToolBar, QHBoxLayout, QVBoxLayout, QSplitter
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 
 class ViewerWindow:
     def __init__(self):
         self._browser = QWebEngineView()
+        self._splitter = None
         self._browser.load("https://www.google.com/")
+
+    def _set_splitter(self, splitter: QSplitter):
+        self._splitter = splitter
 
     def _getInstance(self) -> QWebEngineView:
         return self._browser
 
+    def _check_splitter_toggle(self, hide_search_window: QAction):
+        splitter_left_side = self._splitter.widget(0)
+        if hide_search_window:
+            print("hide search window: active")
+            splitter_left_side.hide()
+
+        else:
+            print("hide search window: inactive")
+            splitter_left_side.show()
+
     def _createLayout(self) -> QHBoxLayout:
         layout = QHBoxLayout()
+        navbar = QToolBar()
+        hide_search_window = QAction(
+            QIcon(str(PurePath(r"icons").joinpath("arrow-180.png"))),
+            "Back",
+            parent=self._browser,
+        )
+        hide_search_window.setCheckable(True)
+        hide_search_window.triggered.connect(self._check_splitter_toggle)
+        navbar.addAction(hide_search_window)
+
+        layout.addWidget(navbar)
         layout.addWidget(self._browser)
         return layout
 
@@ -32,6 +53,7 @@ class ViewerWindow:
         self._browser.setUrl(url)
 
     url = property(fset=_loadUrl, fget=_getUrl)
+    splitter = property(fset=_set_splitter)
 
 
 class SearchWindow:
