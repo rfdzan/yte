@@ -1,4 +1,6 @@
 import sys
+
+from PySide6.QtGui import QKeyEvent
 from windows import SearchWindow
 
 from PySide6.QtCore import Qt
@@ -20,26 +22,43 @@ class MainWindow(QDialog):
             | Qt.WindowType.WindowMaximizeButtonHint
             | Qt.WindowType.WindowCloseButtonHint
         )
+        self._splitter = QSplitter()
+        self._search_window_toggled = True
         self._left = QWidget()
         self._right = QWidget()
+
         self._createApp()
 
     def _createApp(self):
         self.setLayout(self._createLayout())
 
     def _createLayout(self) -> QHBoxLayout:
-        splitter = QSplitter()
         parent_layout = QHBoxLayout()
         search_window = SearchWindow()
         viewer_window = search_window._getViewerInstance()
         viewer_window_layout = viewer_window._createLayout()
         self._left.setLayout(search_window._createLayout())
         self._right.setLayout(viewer_window_layout)
-        splitter.addWidget(self._left)
-        splitter.addWidget(self._right)
-        viewer_window.splitter = splitter
-        parent_layout.addWidget(splitter)
+        self._splitter.addWidget(self._left)
+        self._splitter.addWidget(self._right)
+        viewer_window.splitter = self._splitter
+        parent_layout.addWidget(self._splitter)
         return parent_layout
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        splitter_left_side = self._splitter.widget(0)
+
+        if event.key() != Qt.Key.Key_T:
+            return
+
+        if self._search_window_toggled:
+            splitter_left_side.hide()
+            self._search_window_toggled = False
+            return
+        if not self._search_window_toggled:
+            splitter_left_side.show()
+            self._search_window_toggled = True
+            return
 
 
 if __name__ == "__main__":

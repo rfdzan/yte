@@ -23,7 +23,11 @@ class ViewerWindow:
         return self._browser
 
     def _check_splitter_toggle(self, hide_search_window: QAction):
+        """
+        Currently unused.
+        """
         splitter_left_side = self._splitter.widget(0)
+
         if hide_search_window:
             print("hide search window: active")
             splitter_left_side.hide()
@@ -32,8 +36,12 @@ class ViewerWindow:
             print("hide search window: inactive")
             splitter_left_side.show()
 
-    def _createLayout(self) -> QHBoxLayout:
-        layout = QHBoxLayout()
+    def _createNavbar(self) -> QToolBar:
+        """
+        Create a toolbar with a 'collapse search window' button.
+        Currently disabled.
+        This may come back in the future if I see fit.
+        """
         navbar = QToolBar()
         hide_search_window = QAction(
             QIcon(str(PurePath(r"icons").joinpath("arrow-180.png"))),
@@ -43,9 +51,12 @@ class ViewerWindow:
         hide_search_window.setCheckable(True)
         hide_search_window.triggered.connect(self._check_splitter_toggle)
         navbar.addAction(hide_search_window)
+        return navbar
 
-        layout.addWidget(navbar)
+    def _createLayout(self) -> QHBoxLayout:
+        layout = QVBoxLayout()
         layout.addWidget(self._browser)
+        # layout.addWidget(self._createNavbar)
         return layout
 
     def _getUrl(self):
