@@ -1,6 +1,7 @@
 import sys
 from windows import SearchWindow
 
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QApplication,
     QDialog,
@@ -14,6 +15,11 @@ class MainWindow(QDialog):
     def __init__(self):
         super().__init__(parent=None)
         self.setWindowTitle("yte")
+        self.setWindowFlags(
+            Qt.WindowType.WindowMinimizeButtonHint
+            | Qt.WindowType.WindowMaximizeButtonHint
+            | Qt.WindowType.WindowCloseButtonHint
+        )
         self._left = QWidget()
         self._right = QWidget()
         self._createApp()
