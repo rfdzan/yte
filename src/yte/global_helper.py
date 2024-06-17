@@ -1,6 +1,5 @@
 from constants import (
     BROWSER_STORAGE_PATH,
-    BROWSER_PERSISTENT_STORAGE,
     BROWSER_STORAGE_DOWNLOAD,
 )
 from PySide6.QtWebEngineWidgets import QWebEngineView

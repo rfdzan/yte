@@ -1,4 +1,5 @@
 import re
+from windows import ViewerWindow
 from global_helper import helper_create_profile
 from PySide6.QtCore import QUrl
 from PySide6.QtWebEngineWidgets import QWebEngineView
@@ -30,8 +31,6 @@ def convert_to_embed(msg: str) -> QUrl | None:
 
 
 class CustomWebPage(QWebEnginePage):
-    from windows import ViewerWindow
-
     def __init__(
         self, parent=None, profile=QWebEngineProfile, viewer_window=ViewerWindow
     ) -> None:
@@ -46,8 +45,6 @@ class CustomWebPage(QWebEnginePage):
 
 
 class SearchWebView(QWebEngineView):
-    from windows import ViewerWindow
-
     def __init__(self, viewer_window: ViewerWindow, parent=None) -> None:
         super().__init__(parent)
         self._viewer = viewer_window

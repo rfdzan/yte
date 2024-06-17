@@ -1,5 +1,4 @@
 import sys
-import os
 from PySide6.QtGui import QKeyEvent
 from windows import SearchWindow
 
