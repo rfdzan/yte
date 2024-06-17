@@ -1,5 +1,5 @@
 import sys
-
+import os
 from PySide6.QtGui import QKeyEvent
 from windows import SearchWindow
 
@@ -22,7 +22,13 @@ class MainWindow(QDialog):
             | Qt.WindowType.WindowMaximizeButtonHint
             | Qt.WindowType.WindowCloseButtonHint
         )
+        self.color = self.palette()
+        self.color.setColor(self.backgroundRole(), "#282828")
+        self.setPalette(self.color)
+
         self._splitter = QSplitter()
+        self._splitter.setHandleWidth(0)
+
         self._search_window_toggled = True
         self._left = QWidget()
         self._right = QWidget()
@@ -43,6 +49,7 @@ class MainWindow(QDialog):
         self._splitter.addWidget(self._right)
         viewer_window.splitter = self._splitter
         parent_layout.addWidget(self._splitter)
+        parent_layout.setContentsMargins(0, 0, 0, 0)
         return parent_layout
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
