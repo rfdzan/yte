@@ -77,10 +77,10 @@ class ViewerWindow:
 
 class SearchWindow:
     def __init__(self):
-        from custom_webengine import CustomWebView
+        from custom_webengine import SearchWebView
 
         self._viewer = ViewerWindow()
-        self._browser = CustomWebView(self._viewer)
+        self._browser = SearchWebView(self._viewer)
         self._browser.setUrl(QUrl("https://www.youtube.com/"))
 
     def _getViewerInstance(self) -> ViewerWindow:

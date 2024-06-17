@@ -68,8 +68,12 @@ class MainWindow(QDialog):
             return
 
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+def main(app: QApplication):
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    main(app)

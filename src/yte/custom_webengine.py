@@ -45,7 +45,7 @@ class CustomWebPage(QWebEnginePage):
             self._viewer.url = update_url
 
 
-class CustomWebView(QWebEngineView):
+class SearchWebView(QWebEngineView):
     from windows import ViewerWindow
 
     def __init__(self, viewer_window: ViewerWindow, parent=None) -> None:
