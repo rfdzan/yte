@@ -1,4 +1,5 @@
 import sys
+import typing
 from PySide6.QtGui import QKeyEvent
 from windows import SearchWindow
 
@@ -21,42 +22,60 @@ class MainWindow(QDialog):
             | Qt.WindowType.WindowMaximizeButtonHint
             | Qt.WindowType.WindowCloseButtonHint
         )
+        self.searchWindow = SearchWindow()
+
+        self._layout = QHBoxLayout()
+        self._splitter = QSplitter()
+
+        self._left = QWidget()
+        self._right = QWidget()
+
+        self._createApp(
+            self._createLayout,
+            self._setMainWindowColor,
+            self._createLeftRightWindows,
+            self._createSplitter,
+        )
+        self._search_window_toggled = True
+
+    def _createApp(
+        self,
+        mainLayout: typing.Callable[[], QHBoxLayout],
+        setColors: typing.Callable[[], None],
+        leftRightWindows: typing.Callable[[], tuple[QWidget, QWidget]],
+        splitter: typing.Callable[[QWidget, QWidget], None],
+    ):
+        layout = mainLayout()
+        setColors()
+        leftRightWindows()
+        splitter(self._left, self._right)
+        layout.addWidget(self._splitter)
+
+    def _setMainWindowColor(self):
         self.color = self.palette()
         self.color.setColor(self.backgroundRole(), "#282828")
         self.setPalette(self.color)
 
-        self._splitter = QSplitter()
+    def _createLeftRightWindows(self) -> tuple[QWidget, QWidget]:
+        self._left.setLayout(self.searchWindow._createLayout())
+        self._right.setLayout(self.searchWindow.viewerInstance._createLayout())
+
+    def _createSplitter(self, left: QWidget, right: QWidget):
         self._splitter.setHandleWidth(0)
-
-        self._search_window_toggled = True
-        self._left = QWidget()
-        self._right = QWidget()
-
-        self._createApp()
-
-    def _createApp(self):
-        self.setLayout(self._createLayout())
+        self._splitter.addWidget(left)
+        self._splitter.addWidget(right)
+        self.searchWindow.viewerInstance.splitter = self._splitter
 
     def _createLayout(self) -> QHBoxLayout:
-        parent_layout = QHBoxLayout()
-        search_window = SearchWindow()
-        viewer_window = search_window._getViewerInstance()
-        viewer_window_layout = viewer_window._createLayout()
-        self._left.setLayout(search_window._createLayout())
-        self._right.setLayout(viewer_window_layout)
-        self._splitter.addWidget(self._left)
-        self._splitter.addWidget(self._right)
-        viewer_window.splitter = self._splitter
-        parent_layout.addWidget(self._splitter)
-        parent_layout.setContentsMargins(0, 0, 0, 0)
-        return parent_layout
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)
+        return layout
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         splitter_left_side = self._splitter.widget(0)
-
         if event.key() != Qt.Key.Key_T:
             return
-
         if self._search_window_toggled:
             splitter_left_side.hide()
             self._search_window_toggled = False
