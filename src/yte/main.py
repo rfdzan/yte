@@ -1,9 +1,10 @@
 import sys
 import typing
-from PySide6.QtGui import QKeyEvent
+from PySide6.QtGui import QKeyEvent, QResizeEvent
 from windows import SearchWindow
 
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QScreen
 from PySide6.QtWidgets import (
     QApplication,
     QDialog,
@@ -14,7 +15,7 @@ from PySide6.QtWidgets import (
 
 
 class MainWindow(QDialog):
-    def __init__(self):
+    def __init__(self, screens: list[QScreen]):
         super().__init__(parent=None)
         self.setWindowTitle("yte")
         self.setWindowFlags(
@@ -22,6 +23,7 @@ class MainWindow(QDialog):
             | Qt.WindowType.WindowMaximizeButtonHint
             | Qt.WindowType.WindowCloseButtonHint
         )
+        self._screens = screens
         self.searchWindow = SearchWindow()
 
         self._layout = QHBoxLayout()
@@ -37,6 +39,7 @@ class MainWindow(QDialog):
             self._createSplitter,
         )
         self._search_window_toggled = True
+        self._toggle_window_switch = False
 
     def _createApp(
         self,
@@ -72,10 +75,38 @@ class MainWindow(QDialog):
         self.setLayout(layout)
         return layout
 
+    def _windowSwitching(self, switch: bool):
+        orientation = Qt.Orientation.Vertical if switch else Qt.Orientation.Horizontal
+        left = self._right if switch else self._left
+        right = self._right if not switch else self._left
+        self._splitter.setOrientation(orientation)
+
+        # NOTE: replaceWidget requires unparenting.
+        # this leads to the viewer window unparented if the search pane is collapsed and the window is moved by a combination of Super + Arrow keys.
+        # This solution seems to work better so far:
+
+        self._splitter.insertWidget(0, left)
+        self._splitter.insertWidget(1, right)
+
+    def resizeEvent(self, resize: QResizeEvent) -> None:
+        # TODO: tweak `activeMonitor` so the window can detect which screen its in.
+        activeMonitor = self._screens[0]
+        maxWidth = activeMonitor.size().width()
+        currentWidth = resize.size().width()
+        if currentWidth <= maxWidth // 2 and not self._toggle_window_switch:
+            self._toggle_window_switch = True
+            self._windowSwitching(True)
+
+        if currentWidth > maxWidth // 2 and self._toggle_window_switch:
+            self._toggle_window_switch = False
+            self._windowSwitching(False)
+
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        splitter_left_side = self._splitter.widget(0)
         if event.key() != Qt.Key.Key_T:
             return
+        splitter_left_side = self._splitter.widget(
+            1 if self._toggle_window_switch else 0
+        )
         if self._search_window_toggled:
             splitter_left_side.hide()
             self._search_window_toggled = False
@@ -87,7 +118,7 @@ class MainWindow(QDialog):
 
 
 def main(app: QApplication):
-    window = MainWindow()
+    window = MainWindow(app.screens())
     window.show()
     sys.exit(app.exec())
 
