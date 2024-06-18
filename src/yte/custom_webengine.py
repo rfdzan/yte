@@ -17,7 +17,7 @@ def do_navigate(msg: str) -> bool:
     return False
 
 
-def convert_to_embed(msg: str) -> QUrl | None:
+def convert_to_embed(msg: QUrl) -> QUrl | None:
     domain = "https://www.youtube.com/embed/"
     pattern_long = (
         r"(\w+://www\.)(youtube\.com/)(?:watch|live)(\W(?:v=)?[^\?]+)(?:\W\w+=.+)?"
@@ -27,6 +27,8 @@ def convert_to_embed(msg: str) -> QUrl | None:
     if matches_long is None:
         return matches_long
     video_id = re.match(pattern_video_id, matches_long.group(3), re.IGNORECASE)
+    if video_id is None:
+        return None
     return QUrl(domain + video_id.group(1))
 
 

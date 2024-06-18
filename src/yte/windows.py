@@ -3,7 +3,7 @@ from pathlib import PurePath
 from global_helper import helper_create_profile
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QAction, QIcon
-from PySide6.QtWidgets import QToolBar, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy
+from PySide6.QtWidgets import QToolBar, QVBoxLayout, QSplitter, QSizePolicy
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEnginePage
 
@@ -11,6 +11,7 @@ from PySide6.QtWebEngineCore import QWebEnginePage
 class ViewerWindow:
     def __init__(self):
         self._browser = QWebEngineView()
+        self._splitter = None
         self._browser.setSizePolicy(
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
         )
@@ -18,7 +19,6 @@ class ViewerWindow:
             helper_create_profile("viewer", self._browser), self._browser
         )
         self._browser.setPage(self._page)
-        self._splitter = None
         self._browser.load("https://www.google.com/")
 
     def _set_splitter(self, splitter: QSplitter):
@@ -58,7 +58,7 @@ class ViewerWindow:
         navbar.addAction(hide_search_window)
         return navbar
 
-    def _createLayout(self) -> QHBoxLayout:
+    def _createLayout(self) -> QVBoxLayout:
         layout = QVBoxLayout()
         layout.addWidget(self._browser)
         # layout.addWidget(self._createNavbar)
@@ -86,7 +86,7 @@ class SearchWindow:
     def _getViewerInstance(self) -> ViewerWindow:
         return self._viewer
 
-    def _createMenuBar(self) -> QToolBar:
+    def _createNavBar(self) -> QToolBar:
         navbar = QToolBar("Navigation")
         # back button
         back_button = QAction(
@@ -110,7 +110,9 @@ class SearchWindow:
 
     def _createLayout(self):
         search_window_layout = QVBoxLayout()
-        search_window_navbar = self._createMenuBar()
+        search_window_navbar = self._createNavBar()
         search_window_layout.addWidget(search_window_navbar)
         search_window_layout.addWidget(self._browser)
         return search_window_layout
+
+    viewerInstance = property(fget=_getViewerInstance)
