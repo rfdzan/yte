@@ -47,8 +47,8 @@ class MainWindow(QDialog):
     ):
         layout = mainLayout()
         setColors()
-        left, right = leftRightWindows()
-        splitter(left, right)
+        leftRightWindows()
+        splitter(self._left, self._right)
         layout.addWidget(self._splitter)
 
     def _setMainWindowColor(self):
@@ -57,11 +57,8 @@ class MainWindow(QDialog):
         self.setPalette(self.color)
 
     def _createLeftRightWindows(self) -> tuple[QWidget, QWidget]:
-        left = QWidget()
-        right = QWidget()
-        left.setLayout(self.searchWindow._createLayout())
-        right.setLayout(self.searchWindow.viewerInstance._createLayout())
-        return left, right
+        self._left.setLayout(self.searchWindow._createLayout())
+        self._right.setLayout(self.searchWindow.viewerInstance._createLayout())
 
     def _createSplitter(self, left: QWidget, right: QWidget):
         self._splitter.setHandleWidth(0)
