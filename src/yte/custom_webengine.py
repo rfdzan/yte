@@ -1,7 +1,9 @@
 import re
+from windows import ViewerWindow
+from global_helper import helper_create_profile
 from PySide6.QtCore import QUrl
 from PySide6.QtWebEngineWidgets import QWebEngineView
-from PySide6.QtWebEngineCore import QWebEnginePage
+from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
 
 
 def do_navigate(msg: str) -> bool:
@@ -29,10 +31,10 @@ def convert_to_embed(msg: str) -> QUrl | None:
 
 
 class CustomWebPage(QWebEnginePage):
-    from windows import ViewerWindow
-
-    def __init__(self, parent=None, viewer_window=ViewerWindow) -> None:
-        super().__init__(parent)
+    def __init__(
+        self, parent=None, profile=QWebEngineProfile, viewer_window=ViewerWindow
+    ) -> None:
+        super().__init__(profile, parent)
         self._viewer = viewer_window
         self.linkHovered.connect(self.load_embed)
 
@@ -42,11 +44,13 @@ class CustomWebPage(QWebEnginePage):
             self._viewer.url = update_url
 
 
-class CustomWebView(QWebEngineView):
-    from windows import ViewerWindow
-
+class SearchWebView(QWebEngineView):
     def __init__(self, viewer_window: ViewerWindow, parent=None) -> None:
         super().__init__(parent)
         self._viewer = viewer_window
-        self._page = CustomWebPage(self, viewer_window=self._viewer)
+        self._page = CustomWebPage(
+            parent=self,
+            viewer_window=self._viewer,
+            profile=helper_create_profile("search", self),
+        )
         self.setPage(self._page)

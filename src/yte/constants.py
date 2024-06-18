@@ -1,0 +1,5 @@
+from pathlib import Path
+
+BROWSER_STORAGE_PATH = Path("browser")
+BROWSER_STORAGE_DOWNLOAD = BROWSER_STORAGE_PATH.joinpath("Downloads")
+BROWSER_PERSISTENT_STORAGE = BROWSER_STORAGE_PATH.joinpath(".local")

@@ -1,27 +1,22 @@
 from pathlib import PurePath
 
-
+from global_helper import helper_create_profile
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QToolBar, QHBoxLayout, QVBoxLayout, QSplitter, QSizePolicy
 from PySide6.QtWebEngineWidgets import QWebEngineView
-from PySide6.QtWebEngineCore import QWebEngineProfile, QWebEnginePage
+from PySide6.QtWebEngineCore import QWebEnginePage
 
 
 class ViewerWindow:
     def __init__(self):
         self._browser = QWebEngineView()
-        self._browser_profile = QWebEngineProfile("my_profile", self._browser)
-        self._browser_profile.setHttpUserAgent(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0"
-        )
-        self._browser_profile.setPersistentCookiesPolicy(
-            QWebEngineProfile.PersistentCookiesPolicy.AllowPersistentCookies
-        )
         self._browser.setSizePolicy(
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
         )
-        self._page = QWebEnginePage(self._browser_profile, self._browser)
+        self._page = QWebEnginePage(
+            helper_create_profile("viewer", self._browser), self._browser
+        )
         self._browser.setPage(self._page)
         self._splitter = None
         self._browser.load("https://www.google.com/")
@@ -82,10 +77,10 @@ class ViewerWindow:
 
 class SearchWindow:
     def __init__(self):
-        from custom_webengine import CustomWebView
+        from custom_webengine import SearchWebView
 
         self._viewer = ViewerWindow()
-        self._browser = CustomWebView(self._viewer)
+        self._browser = SearchWebView(self._viewer)
         self._browser.setUrl(QUrl("https://www.youtube.com/"))
 
     def _getViewerInstance(self) -> ViewerWindow:
