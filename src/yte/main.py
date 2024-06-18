@@ -77,11 +77,16 @@ class MainWindow(QDialog):
 
     def _windowSwitching(self, switch: bool):
         orientation = Qt.Orientation.Vertical if switch else Qt.Orientation.Horizontal
-        right = self._right if switch else self._left
+        left = self._right if switch else self._left
+        right = self._right if not switch else self._left
         self._splitter.setOrientation(orientation)
-        right.setParent(None)
-        left = self._splitter.replaceWidget(0, right)
-        self._splitter.addWidget(left)
+
+        # NOTE: replaceWidget requires unparenting.
+        # this leads to the viewer window unparented if the search pane is collapsed and the window is moved by a combination of Super + Arrow keys.
+        # This solution seems to work better so far:
+
+        self._splitter.insertWidget(0, left)
+        self._splitter.insertWidget(1, right)
 
     def resizeEvent(self, resize: QResizeEvent) -> None:
         # TODO: tweak `activeMonitor` so the window can detect which screen its in.
@@ -97,11 +102,11 @@ class MainWindow(QDialog):
             self._windowSwitching(False)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() != Qt.Key.Key_T:
+            return
         splitter_left_side = self._splitter.widget(
             1 if self._toggle_window_switch else 0
         )
-        if event.key() != Qt.Key.Key_T:
-            return
         if self._search_window_toggled:
             splitter_left_side.hide()
             self._search_window_toggled = False
