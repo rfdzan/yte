@@ -92,7 +92,22 @@ class MainWindow(QDialog):
         # TODO: tweak `activeMonitor` so the window can detect which screen its in.
         activeMonitor = self._screens[0]
         maxWidth = activeMonitor.size().width()
+        maxHeight = activeMonitor.size().height()
+        isLandscape = True if maxWidth > maxHeight else False
         currentWidth = resize.size().width()
+
+        # If monitor screen orientation is portrait
+        # switch splitter orientation to vertical if it isn't already
+        # and stay in this mode.
+        if not isLandscape:
+            # This block should only be executed once.
+            if self._splitter.orientation() == Qt.Orientation.Horizontal:
+                self._splitter.setOrientation(Qt.Orientation.Vertical)
+                self._windowSwitching(True)
+                self._toggle_window_switch = True
+                return
+            return
+
         if currentWidth <= maxWidth // 2 and not self._toggle_window_switch:
             self._toggle_window_switch = True
             self._windowSwitching(True)
